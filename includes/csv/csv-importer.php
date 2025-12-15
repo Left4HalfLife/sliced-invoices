@@ -406,6 +406,33 @@ class Sliced_Csv_Importer {
 		// add the client or use existing
 		$this->maybe_add_client( $id, $data, $post_type );
 
+		// Check if payment data exists in the CSV row
+		if (!empty($data['Date']) && !empty($data['Amount'])) {
+			$payment = array(
+				'gateway'    => !empty($data['Payment Method']) ? $data['Payment Method'] : 'bank',
+				'date'       => $data['Date'],
+				'amount'     => Sliced_Shared::get_formatted_number($data['Amount']),
+				'currency'   => get_option('sliced_currency', 'USD'), // Default to USD if not set
+				'payment_id' => !empty($data['Payment ID']) ? $data['Payment ID'] : '',
+				'status'     => !empty($data['Status']) ? strtolower($data['Status']) : 'completed',
+				'extra_data' => json_encode(array(
+					'memo' => !empty($data['Memo']) ? $data['Memo'] : '',
+				)),
+			);
+
+			// Retrieve existing payments for the invoice
+			$payments = get_post_meta($id, '_sliced_payment', true);
+			if (!is_array($payments)) {
+				$payments = array();
+			}
+
+			// Add the new payment to the array
+			$payments[] = $payment;
+
+			// Update the post meta with the new payments array
+			update_post_meta($id, '_sliced_payment', $payments);
+		}
+
 		return $id;
 
 	}

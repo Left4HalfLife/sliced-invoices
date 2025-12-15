@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'SLICED_VERSION', '3.9.5' );
+define( 'SLICED_VERSION', '3.9.6' );
 define( 'SLICED_DB_VERSION', '9' );
 define( 'SLICED_PATH', plugin_dir_path( __FILE__ ) );
 
